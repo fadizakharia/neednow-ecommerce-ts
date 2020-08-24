@@ -3,6 +3,7 @@ import NavBar from "./components/nav/navbar";
 import { BrowserRouter, Route, Switch } from "react-router-dom";
 import "./App.css";
 const Signin = React.lazy(() => import("./components/auth/Signin"));
+const Signup = React.lazy(() => import("./components/auth/Signup"));
 function App() {
   return (
     <BrowserRouter>
@@ -11,14 +12,7 @@ function App() {
         <Suspense fallback={<div>Loading...</div>}>
           <Switch>
             <Route path="/signin" component={() => <Signin />} />
-            <Route
-              path="/signup"
-              component={() => (
-                <div>
-                  <h1>signup</h1>
-                </div>
-              )}
-            />
+            <Route path="/signup" component={Signup} />
             <Route
               path="/stores/store"
               component={() => (
