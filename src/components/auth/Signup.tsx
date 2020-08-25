@@ -178,15 +178,24 @@ export default function Signup() {
       },
       { abortEarly: false }
     );
+    let tempErrors: errorsObject = { ...errors };
     if (isValid.error) {
       isValid.error.details.forEach((e) => {
         if (e.context?.key) {
-          setErrors((preErr) => ({
-            ...preErr,
+          tempErrors = {
+            ...tempErrors,
             [e.context!.key!.toString()]: e.message,
-          }));
+          };
+          //     setErrors((preErr) => ({
+          //   ...preErr,
+          //   [e.context!.key!.toString()]: e.message,
+          // }));
         }
       });
+      setErrors((preErr) => ({
+        ...preErr,
+        ...tempErrors,
+      }));
     }
   };
   console.log("i rerendered");
