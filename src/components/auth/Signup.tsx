@@ -28,6 +28,7 @@ import {
   citySchema,
 } from "../utils/signupValidation";
 import Joi from "joi";
+import { validatePostCode } from "../utils/postcodevalidation";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -90,6 +91,7 @@ interface errorsObject {
   confirmPassword?: string | null;
   state?: string | null;
   city?: string | null;
+  postCode?: string | null;
 }
 export default function Signup() {
   const [errors, setErrors] = useState<errorsObject | null>({
@@ -101,6 +103,7 @@ export default function Signup() {
     confirmPassword: null,
     state: null,
     city: null,
+    postCode: null,
   });
 
   const [countries, setCountries] = useState<ICountry[]>();
@@ -113,6 +116,7 @@ export default function Signup() {
   const passwordRef = useRef<HTMLInputElement>();
   const emailRef = useRef<HTMLInputElement>();
   const confirmPasswordRef = useRef<HTMLInputElement>();
+  const zipCodeRef = useRef<HTMLInputElement>();
 
   const classes = useStyles();
   useEffect(() => {
@@ -140,6 +144,17 @@ export default function Signup() {
         Joi.assert(e.target.value, stateSchema);
       } else if (path === "city") {
         Joi.assert(e.target.value, citySchema);
+      } else if (path === "postCode") {
+        const postCodeValidity: true | false | undefined = validatePostCode(
+          e.target.value,
+          countryRef.current!.value
+        );
+        console.log(postCodeValidity);
+
+        if (!postCodeValidity) {
+          setErrors((e) => ({ ...e, postCode: "post code is invalid" }));
+          throw new Error("post code is invalid");
+        }
       }
       setErrors((e) => {
         return { ...e, [path]: null };
@@ -403,6 +418,30 @@ export default function Signup() {
                 {errors?.city ? (
                   <Typography variant="subtitle2" color="error">
                     "please enter a city"
+                  </Typography>
+                ) : (
+                  false
+                )}
+              </FormControl>
+            </Grid>
+            <Grid item xs={6}>
+              <FormControl className={classes.formControl}>
+                <TextField
+                  inputProps={{
+                    form: { autoComplete: "off" },
+                  }}
+                  fullWidth
+                  label="post/zip code"
+                  autoComplete="postCodeAutoComplete"
+                  inputRef={zipCodeRef}
+                  error={errors?.postCode ? true : false}
+                  onBlur={(e: React.ChangeEvent<{ value: string }>) =>
+                    handleValidationSingle(e, "postCode")
+                  }
+                />
+                {errors?.postCode ? (
+                  <Typography variant="subtitle2" color="error">
+                    "please enter a valid zipcode"
                   </Typography>
                 ) : (
                   false
