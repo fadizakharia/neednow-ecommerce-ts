@@ -153,6 +153,7 @@ export default function Signup() {
   };
   const handleSubmit = async (e: any) => {
     e.preventDefault();
+
     console.log(
       countryRef.current?.value,
       stateRef.current?.value,
@@ -165,13 +166,27 @@ export default function Signup() {
       birthDateRef.current?.value
     );
 
-    try {
-    } catch (err) {
-      err.inner.forEach((e: any) => {
-        console.log(e);
-        setErrors({ [e.path]: e.path });
+    const isValid = signupValidationSchema.validate(
+      {
+        state: stateRef.current?.value,
+        city: cityRef.current?.value,
+        firstName: firstNameRef.current?.value,
+        password: passwordRef.current?.value,
+        email: emailRef.current?.value,
+        lastName: lastNameRef.current?.value,
+        birthDate: birthDateRef.current?.value,
+      },
+      { abortEarly: false }
+    );
+    if (isValid.error) {
+      isValid.error.details.forEach((e) => {
+        if (e.context?.key) {
+          setErrors((preErr) => ({
+            ...preErr,
+            [e.context!.key!.toString()]: e.message,
+          }));
+        }
       });
-      console.log(errors);
     }
   };
   console.log("i rerendered");

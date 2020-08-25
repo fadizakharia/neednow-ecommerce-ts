@@ -17,7 +17,7 @@ export const signupValidationSchema = Joi.object({
     .email({ tlds: { allow: false } })
     .required(),
   password: Joi.string().required(),
-  confirmPassword: Joi.ref("password"),
+
   state: Joi.string().required(),
   city: Joi.string().required(),
 });
